@@ -61,7 +61,7 @@ fromUrl url =
     -- The RealWorld spec treats the fragment like a path.
     -- This makes it *literally* the path, so we can proceed
     -- with parsing as if it had been a normal path all along.
-    { url | path = Maybe.withDefault "" url.fragment, fragment = Nothing }
+    { url | path = url.path, fragment = Nothing }
         |> Parser.parse parser
 
 
@@ -104,4 +104,4 @@ routeToString page =
                 EditArticle slug ->
                     [ "editor", Slug.toString slug ]
     in
-    "#/" ++ String.join "/" pieces
+    String.join "/" pieces
