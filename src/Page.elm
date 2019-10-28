@@ -24,6 +24,7 @@ type Page
     = Other
     | Home
     | Login
+    | Plotting
     | Register
     | Settings
     | Profile Username

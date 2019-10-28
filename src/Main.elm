@@ -14,6 +14,7 @@ import Page.Blank as Blank
 import Page.Home as Home
 import Page.Login as Login
 import Page.NotFound as NotFound
+import Page.Plotting as Plotting
 import Page.Profile as Profile
 import Page.Register as Register
 import Page.Settings as Settings
@@ -40,6 +41,7 @@ type Model
     | Home Home.Model
     | Settings Settings.Model
     | Login Login.Model
+    | Plotting Plotting.Model
     | Register Register.Model
     | Profile Username Profile.Model
     | Article Article.Model
@@ -91,6 +93,9 @@ view model =
         Login login ->
             viewPage Page.Other GotLoginMsg (Login.view login)
 
+        Plotting plotting ->
+            viewPage Page.Plotting GotPlottingMsg (Plotting.view plotting)
+
         Register register ->
             viewPage Page.Other GotRegisterMsg (Register.view register)
 
@@ -118,6 +123,7 @@ type Msg
     | GotHomeMsg Home.Msg
     | GotSettingsMsg Settings.Msg
     | GotLoginMsg Login.Msg
+    | GotPlottingMsg Plotting.Msg
     | GotRegisterMsg Register.Msg
     | GotProfileMsg Profile.Msg
     | GotArticleMsg Article.Msg
@@ -142,6 +148,9 @@ toSession page =
 
         Login login ->
             Login.toSession login
+
+        Plotting plotting ->
+            Plotting.toSession plotting
 
         Register register ->
             Register.toSession register
@@ -192,6 +201,10 @@ changeRouteTo maybeRoute model =
             Login.init session
                 |> updateWith Login GotLoginMsg model
 
+        Just Route.Plotting ->
+            Plotting.init session
+                |> updateWith Plotting GotPlottingMsg model
+
         Just Route.Register ->
             Register.init session
                 |> updateWith Register GotRegisterMsg model
@@ -211,9 +224,9 @@ update msg model =
         ( ClickedLink urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
-                        ( model
-                        , Nav.pushUrl (Session.navKey (toSession model)) (Url.toString url)
-                        )
+                    ( model
+                    , Nav.pushUrl (Session.navKey (toSession model)) (Url.toString url)
+                    )
 
                 Browser.External href ->
                     ( model
@@ -233,6 +246,10 @@ update msg model =
         ( GotLoginMsg subMsg, Login login ) ->
             Login.update subMsg login
                 |> updateWith Login GotLoginMsg model
+
+        ( GotPlottingMsg subMsg, Plotting plotting ) ->
+            Plotting.update subMsg plotting
+                |> updateWith Plotting GotPlottingMsg model
 
         ( GotRegisterMsg subMsg, Register register ) ->
             Register.update subMsg register
@@ -292,6 +309,9 @@ subscriptions model =
 
         Login login ->
             Sub.map GotLoginMsg (Login.subscriptions login)
+
+        Plotting plotting ->
+            Sub.map GotPlottingMsg (Plotting.subscriptions plotting)
 
         Register register ->
             Sub.map GotRegisterMsg (Register.subscriptions register)

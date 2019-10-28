@@ -19,6 +19,7 @@ type Route
     | Root
     | Login
     | Logout
+    | Plotting
     | Register
     | Settings
     | Article Slug
@@ -33,6 +34,7 @@ parser =
         [ Parser.map Home Parser.top
         , Parser.map Login (s "login")
         , Parser.map Logout (s "logout")
+        , Parser.map Plotting (s "plotting")
         , Parser.map Settings (s "settings")
         , Parser.map Profile (s "profile" </> Username.urlParser)
         , Parser.map Register (s "register")
@@ -75,7 +77,7 @@ routeToString page =
         pieces =
             case page of
                 Home ->
-                    []
+                    [ "home" ]
 
                 Root ->
                     []
@@ -85,6 +87,9 @@ routeToString page =
 
                 Logout ->
                     [ "logout" ]
+
+                Plotting ->
+                    [ "plotting" ]
 
                 Register ->
                     [ "register" ]
