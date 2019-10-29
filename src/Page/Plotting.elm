@@ -1,17 +1,17 @@
-module Page.Plotting exposing (Model, Msg, init, subscriptions, toSession, update, view)
+module Page.Plotting exposing (Model, Msg, init, randomMatrix, subscriptions, toSession, update, view)
 
 import Array exposing (Array)
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import List.Extra
-import Maybe.Extra as Maybe
 import Random exposing (generate, int)
 import Random.Array
 import Round
 import Session exposing (Session)
 import Svg exposing (..)
 import Svg.Attributes exposing (d, height, stroke, viewBox, width, x, y)
+import Task
 
 
 
@@ -27,10 +27,9 @@ type alias Model =
 init : Session -> ( Model, Cmd Msg )
 init session =
     ( { session = session
-      , grid = Array.fromList [ 1, 2, 3, 4, 5 ]
+      , grid = Array.initialize 10 (\_ -> Array.fromList [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ])
       }
-    , Cmd.batch
-        []
+    , Task.succeed GenerateNewGrid |> Task.perform identity
     )
 
 
@@ -48,16 +47,51 @@ view model =
                     [ div [ class "col-md-9" ] <|
                         [ svg
                             [ width "120", height "120", viewBox "0 0 120 120" ]
-                            [ svgLine [ { x = 0, y = 0 }, { x = 100, y = 100 } ]
+                            [ svgLineView [ { x = 0, y = 0 }, { x = 100, y = 100 } ]
                             ]
                         , button [ onClick GenerateNewGrid ]
-                            []
-                        , Html.text <| Array.foldr (\current acc -> String.fromInt current ++ acc) "" model.grid
+                            [ Html.text "Regenerate" ]
+                        , gridView model.grid
                         ]
                     ]
                 ]
             ]
     }
+
+
+
+-- DEBUGGING
+
+
+gridView : Grid -> Html Msg
+gridView grid =
+    let
+        columnToTd : Array Int -> List (Html Msg)
+        columnToTd column =
+            column
+                |> Array.map (\entry -> td [] [ Html.text <| String.fromInt entry ])
+                |> Array.toList
+
+        rows =
+            Array.toList <| Array.map (\row -> tr [] <| columnToTd row) grid
+    in
+    table []
+        [ tbody []
+            rows
+        ]
+
+
+gridToString : Grid -> String
+gridToString grid =
+    let
+        stringifiedRows =
+            Array.map (\row -> arrayToString row) grid
+    in
+    Array.foldr (\current acc -> acc ++ current ++ "\n") "" stringifiedRows
+
+
+arrayToString array =
+    Array.foldr (\current acc -> String.fromInt current ++ acc) "" array
 
 
 type alias Point =
@@ -74,8 +108,8 @@ roundPoint val =
     Round.round 2 (val * 100 / 100)
 
 
-svgLine : Points -> Html Msg
-svgLine points =
+svgLineView : Points -> Html Msg
+svgLineView points =
     let
         reducer : Int -> Point -> String -> String
         reducer index { x, y } acc =
@@ -98,8 +132,7 @@ svgLine points =
 
 
 type alias Grid =
-    --    Array (Array Int)
-    Array Int
+    Array (Array Int)
 
 
 type Msg
@@ -109,8 +142,7 @@ type Msg
 
 
 randomMatrix =
-    --    Random.Array.array 5 (Random.Array.array 5 (int 0 4))
-    Random.Array.array 5 (int 0 4)
+    Random.Array.array 10 (Random.Array.array 10 (int 0 4))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
