@@ -1,4 +1,4 @@
-module Page.Plotting exposing (Model, Msg, init, randomMatrix, subscriptions, toSession, update, view)
+module Page.Plotting exposing (Model, Msg, init, randomMatrix, toSession, update, view)
 
 import Array exposing (Array)
 import Basics as Math
@@ -12,7 +12,7 @@ import Random.Array
 import Round
 import Session exposing (Session)
 import Svg exposing (..)
-import Svg.Attributes exposing (cx, cy, d, dy, fill, height, pointerEvents, r, stroke, strokeWidth, textAnchor, viewBox, width, x, y)
+import Svg.Attributes exposing (d, fill, height, stroke, viewBox, width, x, y)
 import Task
 
 
@@ -317,8 +317,7 @@ type alias Grid =
 
 
 type Msg
-    = GotSession Session
-    | GenerateNewGrid
+    = GenerateNewGrid
     | NewGrid Grid
 
 
@@ -334,18 +333,6 @@ update msg model =
 
         NewGrid grid ->
             ( { model | grid = grid }, Cmd.none )
-
-        GotSession session ->
-            ( model, Cmd.none )
-
-
-
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Session.changes GotSession (Session.navKey model.session)
 
 
 
