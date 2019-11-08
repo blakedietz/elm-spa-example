@@ -3,7 +3,7 @@ module Page.Plotting exposing (Model, Msg, init, randomMatrix, toSession, update
 import Array exposing (Array)
 import Basics as Math
 import Html exposing (..)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (attribute, class)
 import Html.Events exposing (onClick)
 import List.Extra
 import PolylinearScale exposing (polylinearScale)
@@ -172,16 +172,22 @@ view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Conduit"
     , content =
-        div [ class "home-page" ]
-            [ div [ class "container page" ]
-                [ div [ class "row" ]
-                    [ div [ class "col-md-9" ] <|
-                        [ viewPiece chartDimensions model.grid
-                        , button [ onClick GenerateNewGrid ]
-                            [ Html.text "Regenerate" ]
-                        , gridToTable model.grid
-                        ]
+        div [ class "flex flex-row justify-between" ]
+            [ div [ class "flex-grow mt-5" ]
+                [ div [ class "flex flex-col justify-center items-center" ]
+                    [ viewPiece
+                        chartDimensions
+                        model.grid
+
+                    --                , gridToTable model.grid
                     ]
+                ]
+            , div [ class "self-end flex flex-col h-screen w-1/6 p-5 bg-gray-200 border border-gray-400" ]
+                [ button
+                    [ class "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                    , onClick GenerateNewGrid
+                    ]
+                    [ Html.text "Create a new grid" ]
                 ]
             ]
     }
@@ -305,6 +311,11 @@ svgLineView points attributes =
 cartesian : List a -> List b -> List ( a, b )
 cartesian xs ys =
     List.concatMap (\x -> List.map (\y -> ( x, y )) ys) xs
+
+
+viewContent : List (Html msg) -> Html msg
+viewContent content =
+    div [ class "flex flex-row m-3" ] content
 
 
 
