@@ -2,12 +2,13 @@ module Page.Plotting exposing (Model, Msg, init, randomMatrix, toSession, update
 
 import Array exposing (Array)
 import Html exposing (..)
-import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (attribute, class)
+import Html.Events exposing (onClick, onInput)
 import Random exposing (generate, int)
 import Random.Array
 import Session exposing (Session)
 import SolLewitt
+import String exposing (toInt)
 import Task
 
 
@@ -31,6 +32,8 @@ type Msg
     | NewGrid SolLewitt.Grid
     | IncrementedNumSquares
     | DecrementedNumSquares
+    | GotNumSquaresInput Int
+    | NoOp
 
 
 init : Session -> ( Model, Cmd Msg )
@@ -72,17 +75,7 @@ view model =
                     --                , gridToTable model.grid
                     ]
                 ]
-            , div [ class "self-end flex flex-col h-screen w-1/6 p-5 bg-gray-200 border border-gray-400" ]
-                [ blueButtonView
-                    [ onClick <| GenerateNewGrid model.numSquares ]
-                    "Create new grid"
-                , text "Number of squares"
-                , div [ class "flex flex-row mt-5" ]
-                    [ redButtonView [ onClick DecrementedNumSquares ] "-"
-                    , div [ class "self-center" ] [ text <| String.fromInt model.numSquares ]
-                    , greenButtonView [ onClick IncrementedNumSquares ] "+"
-                    ]
-                ]
+            , visualizationEditorView model.numSquares
             ]
     }
 
@@ -90,22 +83,50 @@ view model =
 blueButtonView : List (Attribute msg) -> String -> Html msg
 blueButtonView attributes internalText =
     button
-        (class "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" :: attributes)
+        (class "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded" :: attributes)
         [ Html.text internalText ]
 
 
-redButtonView : List (Attribute msg) -> String -> Html msg
-redButtonView attributes internalText =
-    button
-        (class "bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded" :: attributes)
-        [ Html.text internalText ]
+visualizationEditorView : Int -> Html Msg
+visualizationEditorView numSquares =
+    let
+        handleNumSquareOnInput : String -> Msg
+        handleNumSquareOnInput inputValue =
+            case toInt inputValue of
+                Just newNumSquares ->
+                    GotNumSquaresInput newNumSquares
 
+                Nothing ->
+                    NoOp
+    in
+    div [ class "self-end flex flex-col h-screen w-1/6 p-5 bg-gray-200 border border-gray-400" ]
+        [ blueButtonView
+            [ onClick <| GenerateNewGrid numSquares ]
+            "Create new grid"
+        , div [ class "mt-5" ] [ text "Number of squares" ]
 
-greenButtonView : List (Attribute msg) -> String -> Html msg
-greenButtonView attributes internalText =
-    button
-        (class "bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded" :: attributes)
-        [ Html.text internalText ]
+        -- TODO make a form, and figure out how to disable form submit in elm, sure it's just the usual attribute
+        , div [ class "flex mt-2" ]
+            [ button
+                [ class "bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
+                , onClick DecrementedNumSquares
+                ]
+                [ text "-" ]
+            , input
+                [ class "flex-grow w-1/3 p-2 text-center"
+                , attribute "type" "number"
+                , Html.Attributes.type_ "number"
+                , Html.Attributes.value <| String.fromInt numSquares
+                , onInput handleNumSquareOnInput
+                ]
+                [ text <| String.fromInt numSquares ]
+            , button
+                [ class "flex-grow-none bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
+                , onClick IncrementedNumSquares
+                ]
+                [ text "+" ]
+            ]
+        ]
 
 
 
@@ -134,6 +155,12 @@ update msg model =
                     model.numSquares - 1
             in
             ( { model | numSquares = newNumSquares }, generate NewGrid <| randomMatrix newNumSquares )
+
+        GotNumSquaresInput newNumSquares ->
+            ( { model | numSquares = newNumSquares }, generate NewGrid <| randomMatrix newNumSquares )
+
+        NoOp ->
+            ( model, Cmd.none )
 
 
 
