@@ -3,16 +3,15 @@ module Page.Plotting exposing (Model, Msg, init, randomMatrix, toSession, update
 import Array exposing (Array)
 import Basics as Math
 import Html exposing (..)
-import Html.Attributes exposing (attribute, class)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import List.Extra
+import Plotting
 import PolylinearScale exposing (polylinearScale)
 import Random exposing (generate, int)
 import Random.Array
-import Round
 import Session exposing (Session)
 import Svg exposing (..)
-import Svg.Attributes exposing (d, fill, height, stroke, viewBox, width, x, y)
+import Svg.Attributes exposing (fill, height, stroke, viewBox, width, x, y)
 import Task
 
 
@@ -112,7 +111,7 @@ redLine num =
         NoLine
 
 
-viewSquare : Point -> Float -> Int -> List (Svg Msg)
+viewSquare : Plotting.Point -> Float -> Int -> List (Svg Msg)
 viewSquare point size line =
     let
         rectDimensions =
@@ -130,19 +129,19 @@ viewSquare point size line =
         lines lineEnum =
             case lineEnum of
                 VerticalBlackLine ->
-                    svgLineView [ rectDimensions.centerBottom, rectDimensions.centerTop ] [ stroke "black" ]
+                    Plotting.line [ rectDimensions.centerBottom, rectDimensions.centerTop ] [ stroke "black" ]
 
                 HorizontalYellowLine ->
-                    svgLineView [ rectDimensions.centerLeft, rectDimensions.centerRight ] [ stroke "yellow" ]
+                    Plotting.line [ rectDimensions.centerLeft, rectDimensions.centerRight ] [ stroke "yellow" ]
 
                 DiagonalRightRedLine ->
-                    svgLineView [ rectDimensions.bottomLeft, rectDimensions.topRight ] [ stroke "red" ]
+                    Plotting.line [ rectDimensions.bottomLeft, rectDimensions.topRight ] [ stroke "red" ]
 
                 DiagonalLeftBlueLine ->
-                    svgLineView [ rectDimensions.bottomRight, rectDimensions.topLeft ] [ stroke "blue" ]
+                    Plotting.line [ rectDimensions.bottomRight, rectDimensions.topLeft ] [ stroke "blue" ]
 
                 NoLine ->
-                    svgLineView [] []
+                    Plotting.line [] []
     in
     [ rect
         [ x <| String.fromFloat point.x
@@ -276,46 +275,9 @@ arrayToString array =
     Array.foldr (\current acc -> String.fromInt current ++ acc) "" array
 
 
-type alias Point =
-    { x : Float
-    , y : Float
-    }
-
-
-type alias Points =
-    List Point
-
-
-roundPoint val =
-    Round.round 2 (val * 100 / 100)
-
-
-svgLineView : Points -> List (Html.Attribute Msg) -> Html Msg
-svgLineView points attributes =
-    let
-        reducer : Int -> Point -> String -> String
-        reducer index { x, y } acc =
-            if index == 0 then
-                acc ++ "M " ++ roundPoint x ++ "," ++ roundPoint y
-
-            else
-                acc ++ "L " ++ roundPoint x ++ "," ++ roundPoint y
-
-        lineString : String
-        lineString =
-            List.Extra.indexedFoldl reducer "" points
-    in
-    path (attributes ++ [ d lineString ]) []
-
-
 cartesian : List a -> List b -> List ( a, b )
 cartesian xs ys =
     List.concatMap (\x -> List.map (\y -> ( x, y )) ys) xs
-
-
-viewContent : List (Html msg) -> Html msg
-viewContent content =
-    div [ class "flex flex-row m-3" ] content
 
 
 
