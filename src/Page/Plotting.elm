@@ -51,26 +51,6 @@ chartDimensions =
     { width = 500, height = 500, numSquares = 10 }
 
 
-scale =
-    polylinearScale [ ( 0, 500 ), ( 500, 0 ) ]
-
-
-value =
-    let
-        scaledValue =
-            scale 0
-
-        safeValue =
-            case scaledValue of
-                Nothing ->
-                    ""
-
-                Just v ->
-                    String.fromFloat v
-    in
-    safeValue
-
-
 type Line
     = VerticalBlackLine
     | HorizontalYellowLine
