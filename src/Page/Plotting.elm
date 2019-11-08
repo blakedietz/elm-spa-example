@@ -57,10 +57,6 @@ type alias ChartDimensions =
     }
 
 
-chartDimensions =
-    { width = 500, height = 500, numSquares = 10 }
-
-
 view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Conduit"
