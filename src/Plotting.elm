@@ -1,4 +1,4 @@
-module Plotting exposing (Point, Points, line)
+module Plotting exposing (Point, Points, cartesian, line)
 
 import Html exposing (..)
 import List.Extra
@@ -36,7 +36,16 @@ line points attributes =
 
 
 
--- INTERNAL
+-- EXTERNAL HELPER
+
+
+cartesian : List a -> List b -> List ( a, b )
+cartesian xs ys =
+    List.concatMap (\x -> List.map (\y -> ( x, y )) ys) xs
+
+
+
+-- INTERNAL HELPER
 
 
 roundPoint val =
