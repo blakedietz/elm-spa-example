@@ -31,35 +31,26 @@ in the header. (This comes up during slow page transitions.)
 view : Page -> { title : String, content : Html msg } -> Document msg
 view page { title, content } =
     { title = title ++ " - plott.id"
-    , body = viewHeader page :: content :: [ viewFooter ]
+    , body = viewHeader :: [ content ]
     }
 
 
-viewHeader : Page -> Html msg
-viewHeader page =
+viewHeader : Html msg
+viewHeader =
     nav [ class "flex items-center justify-between flex-wrap bg-teal-500 p-6" ]
         [ div [ class "flex items-center flex-shrink-0 text-white mr-6" ]
             [ span [ class "font-semibold text-xl tracking-tight" ]
                 [ text "plott.id" ]
             ]
-        , div [ class "block lg:hidden" ]
-            [ button [ class "flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white" ]
-                [ svg [ Svg.Attributes.class "fill-current h-3 w-3", viewBox "0 0 20 20" ]
-                    [ node "title"
-                        []
-                        [ text "Menu" ]
-                    , path [ d "M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" ]
-                        []
-                    ]
-                ]
-            ]
-        , div [ class "w-full block flex-grow lg:flex lg:items-center lg:w-auto" ]
+
+        --            TODO: Get rid of
+        , div [ class "w-full block flex-grow flex items-center w-auto" ]
             [ div [ class "text-sm lg:flex-grow" ]
-                [ a [ class "block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4", href "#responsive-header" ]
+                [ a [ class "block mt-4 inline-block mt-0 text-teal-200 hover:text-white mr-4", href "#responsive-header" ]
                     [ text "Docs      " ]
-                , a [ class "block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4", href "#responsive-header" ]
+                , a [ class "block mt-4 inline-block mt-0 text-teal-200 hover:text-white mr-4", href "#responsive-header" ]
                     [ text "Examples      " ]
-                , a [ class "block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white", href "#responsive-header" ]
+                , a [ class "block mt-4 inline-block mt-0 text-teal-200 hover:text-white", href "#responsive-header" ]
                     [ text "Blog      " ]
                 ]
             ]

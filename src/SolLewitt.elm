@@ -64,8 +64,7 @@ view dimensions grid =
             dimensions.width / toFloat dimensions.numSquares
     in
     svg
-        [ width <| String.fromFloat dimensions.width
-        , height <| String.fromFloat dimensions.height
+        [ Svg.Attributes.id "sol_lewitt"
         , viewBox <| "0 0 " ++ String.fromFloat dimensions.width ++ " " ++ String.fromFloat dimensions.height
         ]
     <|

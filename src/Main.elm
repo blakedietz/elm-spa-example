@@ -6,7 +6,7 @@ import Html exposing (..)
 import Page exposing (Page)
 import Page.Blank as Blank
 import Page.NotFound as NotFound
-import Page.Plotting as Plotting
+import Page.SolLewitt as SolLewitt
 import Route exposing (Route)
 import Session exposing (Session)
 import Url exposing (Url)
@@ -14,7 +14,7 @@ import Url exposing (Url)
 
 type Model
     = NotFound Session
-    | Plotting Plotting.Model
+    | SolLewitt SolLewitt.Model
     | Redirect Session
 
 
@@ -50,8 +50,8 @@ view model =
         NotFound _ ->
             Page.view Page.Other NotFound.view
 
-        Plotting plotting ->
-            viewPage Page.Plotting GotPlottingMsg (Plotting.view plotting)
+        SolLewitt plotting ->
+            viewPage Page.Plotting GotSolLewittMsg (SolLewitt.view plotting)
 
 
 
@@ -62,7 +62,7 @@ type Msg
     = ChangedRoute (Maybe Route)
     | ChangedUrl Url
     | ClickedLink Browser.UrlRequest
-    | GotPlottingMsg Plotting.Msg
+    | GotSolLewittMsg SolLewitt.Msg
 
 
 toSession : Model -> Session
@@ -74,8 +74,8 @@ toSession page =
         NotFound session ->
             session
 
-        Plotting plotting ->
-            Plotting.toSession plotting
+        SolLewitt plotting ->
+            SolLewitt.toSession plotting
 
 
 changeRouteTo : Maybe Route -> Model -> ( Model, Cmd Msg )
@@ -92,8 +92,8 @@ changeRouteTo maybeRoute model =
             ( model, Route.replaceUrl (Session.navKey session) Route.Home )
 
         Just Route.Plotting ->
-            Plotting.init session
-                |> updateWith Plotting GotPlottingMsg model
+            SolLewitt.init session
+                |> updateWith SolLewitt GotSolLewittMsg model
 
         Just Route.Home ->
             ( model, Route.replaceUrl (Session.navKey session) Route.Home )
@@ -120,9 +120,9 @@ update msg model =
         ( ChangedRoute route, _ ) ->
             changeRouteTo route model
 
-        ( GotPlottingMsg subMsg, Plotting plotting ) ->
-            Plotting.update subMsg plotting
-                |> updateWith Plotting GotPlottingMsg model
+        ( GotSolLewittMsg subMsg, SolLewitt plotting ) ->
+            SolLewitt.update subMsg plotting
+                |> updateWith SolLewitt GotSolLewittMsg model
 
         ( _, _ ) ->
             -- Disregard messages that arrived for the wrong page.
@@ -146,7 +146,7 @@ subscriptions model =
         NotFound _ ->
             Sub.none
 
-        Plotting _ ->
+        SolLewitt _ ->
             Sub.none
 
         Redirect _ ->
