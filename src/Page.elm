@@ -2,9 +2,7 @@ module Page exposing (Page(..), view)
 
 import Browser exposing (Document)
 import Html exposing (..)
-import Html.Attributes exposing (attribute, class, href)
-import Svg exposing (path, svg)
-import Svg.Attributes exposing (d, height, viewBox, width)
+import Html.Attributes exposing (class, href)
 
 
 {-| Determines which navbar link (if any) will be rendered as active.
