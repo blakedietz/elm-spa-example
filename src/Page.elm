@@ -55,6 +55,10 @@ viewHeader =
         ]
 
 
+
+-- TODO: Add this or remove it.
+
+
 viewFooter : Html msg
 viewFooter =
     footer []
