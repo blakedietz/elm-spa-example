@@ -3,7 +3,7 @@ module SolLewitt exposing (..)
 import Array exposing (Array)
 import Basics as Math
 import Html exposing (..)
-import Plotting exposing (cartesian)
+import Plotting exposing (Point, cartesian)
 import PolylinearScale exposing (polylinearScale)
 import Svg exposing (..)
 import Svg.Attributes exposing (fill, height, stroke, viewBox, width, x, y)
@@ -38,6 +38,30 @@ view dimensions grid =
         yScale =
             polylinearScale [ ( 0.0, 0.0 ), ( toFloat dimensions.numSquares, dimensions.height ) ]
 
+        uncurry f ( a, b ) =
+            f a b
+
+        removeMaybePoints points =
+            List.filterMap (uncurry (Maybe.map2 Point)) points
+
+        verticalLines : List (List Point)
+        verticalLines =
+            List.range 0 dimensions.numSquares
+                |> List.map (\x -> removeMaybePoints [ ( xScale <| toFloat x, yScale 0.0 ), ( xScale <| toFloat x, yScale <| toFloat dimensions.numSquares ) ])
+
+        horizontalLines : List (List Point)
+        horizontalLines =
+            List.range 0 dimensions.numSquares
+                |> List.map (\y -> removeMaybePoints [ ( xScale 0.0, yScale <| toFloat y ), ( xScale <| toFloat dimensions.numSquares, yScale <| toFloat y ) ])
+
+        verticalLineView : List (Svg msg)
+        verticalLineView =
+            List.map (\line -> Plotting.line line [ stroke "black" ]) verticalLines
+
+        horizontalLineView : List (Svg msg)
+        horizontalLineView =
+            List.map (\line -> Plotting.line line [ stroke "black" ]) horizontalLines
+
         pointValues maybePoints =
             maybePoints
                 |> List.foldr
@@ -69,15 +93,15 @@ view dimensions grid =
         ]
     <|
         -- Flattening
-        List.foldr (++) []
+        List.foldr (++) (horizontalLineView ++ verticalLineView)
         <|
             List.map
-                (\{ x, y, gridValue } -> viewSquare { x = x, y = y } squareHeight gridValue)
+                (\{ x, y, gridValue } -> squareView { x = x, y = y } squareHeight gridValue)
                 squarePoints
 
 
-viewSquare : Plotting.Point -> Float -> Int -> List (Svg msg)
-viewSquare point size line =
+squareView : Plotting.Point -> Float -> Int -> List (Svg msg)
+squareView point size line =
     let
         rectDimensions =
             { topLeft = { x = point.x, y = point.y }
@@ -108,16 +132,16 @@ viewSquare point size line =
                 NoLine ->
                     Plotting.line [] []
     in
-    [ rect
-        [ x <| String.fromFloat point.x
-        , y <| String.fromFloat point.y
-        , width <| String.fromFloat size
-        , height <| String.fromFloat size
-        , fill "none"
-        , stroke "black"
-        ]
-        []
-    , lines (blackLine line)
+    [ --    rect
+      --        [ x <| String.fromFloat point.x
+      --        , y <| String.fromFloat point.y
+      --        , width <| String.fromFloat size
+      --        , height <| String.fromFloat size
+      --        , fill "none"
+      --        , stroke "black"
+      --        ]
+      --        []
+      lines (blackLine line)
     , lines (blueLine line)
     , lines (redLine line)
     , lines (yellowLine line)

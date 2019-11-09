@@ -3,7 +3,7 @@ module Plotting exposing (Point, Points, cartesian, line)
 import Html exposing (..)
 import List.Extra
 import Round
-import Svg exposing (path)
+import Svg exposing (Svg, path)
 import Svg.Attributes exposing (d)
 
 
@@ -17,7 +17,7 @@ type alias Points =
     List Point
 
 
-line : Points -> List (Html.Attribute msg) -> Html msg
+line : Points -> List (Html.Attribute msg) -> Svg msg
 line points attributes =
     let
         reducer : Int -> Point -> String -> String
