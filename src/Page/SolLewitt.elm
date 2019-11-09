@@ -1,4 +1,4 @@
-module Page.Plotting exposing (Model, Msg, init, randomMatrix, toSession, update, view)
+module Page.SolLewitt exposing (Model, Msg, init, randomMatrix, toSession, update, view)
 
 import Array exposing (Array)
 import Html exposing (..)
@@ -59,13 +59,13 @@ type alias ChartDimensions =
 
 view : Model -> { title : String, content : Html Msg }
 view model =
-    { title = "Conduit"
+    { title = "Sol Lewitt #33"
     , content =
-        div [ class "flex flex-row justify-between" ]
+        div [ class "flex flex-row flex-wrap sm:min-h-screen" ]
             [ div [ class "flex-grow mt-5" ]
                 [ div [ class "flex flex-col justify-center items-center" ]
                     [ SolLewitt.view
-                        { width = 500, height = 500, numSquares = model.numSquares }
+                        { width = 2000, height = 2000, numSquares = model.numSquares }
                         model.grid
 
                     --                , gridToTable model.grid
@@ -95,7 +95,15 @@ visualizationEditorView numSquares =
                 Nothing ->
                     NoOp
     in
-    div [ class "self-end flex flex-col h-screen w-1/6 p-5 bg-gray-200 border border-gray-400" ]
+    div
+        [ class <|
+            "self-stretch flex flex-col flex-grow bg-gray-200 mt-5 p-5"
+                ++ " sm:mt-0"
+                ++ " md:w-1/4 md:flex-none"
+
+        --                Debugging
+        --                ++ " md:bg-red-100 sm:bg-blue-100 lg:bg-green-100 xl:bg-pink-100"
+        ]
         [ blueButtonView
             [ onClick <| GenerateNewGrid numSquares ]
             "Create new grid"

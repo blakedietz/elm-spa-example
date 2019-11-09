@@ -1,0 +1,10 @@
+svg * {
+  transition: fill .1s ease-out, opacity .1s ease-out;
+}
+
+@media all {
+  #sol_lewitt {
+    width: 80%;
+    height: auto;
+  }
+}
