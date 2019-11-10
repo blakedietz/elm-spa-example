@@ -13,7 +13,7 @@ import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 
 type Route
     = Home
-    | Plotting
+    | SolLewitt
     | Root
 
 
@@ -21,7 +21,7 @@ parser : Parser (Route -> a) a
 parser =
     oneOf
         [ Parser.map Home Parser.top
-        , Parser.map Plotting (s "plotting")
+        , Parser.map SolLewitt (s "sol-lewitt-33")
         ]
 
 
@@ -60,8 +60,8 @@ routeToString page =
                 Home ->
                     [ "home" ]
 
-                Plotting ->
-                    [ "plotting" ]
+                SolLewitt ->
+                    [ "sol-lewitt-33" ]
 
                 Root ->
                     []

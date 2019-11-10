@@ -51,7 +51,7 @@ view model =
             Page.view Page.Other NotFound.view
 
         SolLewitt plotting ->
-            viewPage Page.Plotting GotSolLewittMsg (SolLewitt.view plotting)
+            viewPage Page.SolLewitt GotSolLewittMsg (SolLewitt.view plotting)
 
 
 
@@ -91,7 +91,7 @@ changeRouteTo maybeRoute model =
         Just Route.Root ->
             ( model, Route.replaceUrl (Session.navKey session) Route.Home )
 
-        Just Route.Plotting ->
+        Just Route.SolLewitt ->
             SolLewitt.init session
                 |> updateWith SolLewitt GotSolLewittMsg model
 

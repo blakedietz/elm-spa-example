@@ -14,7 +14,7 @@ under Other.
 -}
 type Page
     = Other
-    | Plotting
+    | SolLewitt
 
 
 {-| Take a page's Html and frames it with a header and footer.
